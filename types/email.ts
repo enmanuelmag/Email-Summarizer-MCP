@@ -1,14 +1,24 @@
 import { z } from 'zod';
 
 export const InputGetEmails = {
-  subject: z.string().optional(),
+  mailbox: z.string().default('INBOX').describe('Mailbox to fetch emails from'),
+  subject: z
+    .string()
+    .optional()
+    .describe(
+      'Optional subject to filter emails by subject or sender. Only sent if user provides a subject to search EXPLICITLY!'
+    ),
   dateRange: z
     .object({
       start: z.string().optional(),
       end: z.string().optional(),
     })
-    .optional(),
-  senders: z.array(z.string()).optional(),
+    .optional()
+    .describe('Optional date range to filter emails'),
+  senders: z
+    .array(z.string())
+    .optional()
+    .describe('Optional array of email addresses to filter emails by sender'),
 } as const;
 
 const InputGetEmailsSchema = z.object(InputGetEmails);

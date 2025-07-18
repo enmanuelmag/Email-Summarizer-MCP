@@ -5,8 +5,8 @@ import { InputGetEmailsType, OutputGetEmailsType } from '../types/email';
 import ENV from '../env';
 
 const validatedConfig = {
-  user: ENV.EMAIL_USER,
-  appPassword: ENV.EMAIL_APP_PASSWORD,
+  user: ENV.MCP_EMAIL_USER,
+  appPassword: ENV.MCP_EMAIL_APP_PASSWORD,
 };
 
 class EmailClient {
@@ -45,7 +45,7 @@ class EmailClient {
   async fetchEmails(params: InputGetEmailsType) {
     try {
       await this.connect();
-      await this.client.mailboxOpen('INBOX');
+      await this.client.mailboxOpen(params.mailbox || 'INBOX');
 
       const defaultStartDate = DateTime.now().startOf('day');
 
