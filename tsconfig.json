@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    /* --- Configuración General --- */
+    "strictNullChecks": true,
+    "target": "ES2020", // Versión mínima de JavaScript a la que compilar (ES2020 es un buen punto de partida, compatible con Node.js moderno)
+    "module": "ESNext", // Cómo se deben manejar los módulos (ESNext es moderno y funciona bien con imports/exports)
+    "moduleResolution": "bundler", // Cómo el compilador encuentra los módulos (Node para proyectos Node.js)
+    "strict": true, // Habilita todas las opciones de estrictez (muy recomendable para evitar errores)
+    "esModuleInterop": true, // Permite la interoperabilidad entre módulos CommonJS y ES Modules (ayuda con imports de librerías)
+    "skipLibCheck": true, // Omite la comprobación de tipos de archivos de declaración (.d.ts) de dependencias (acelera la compilación)
+    "forceConsistentCasingInFileNames": true, // Asegura que los nombres de archivo tengan la misma capitalización en todo el proyecto
+
+    /* --- Rutas y Salida --- */
+    "rootDir": "./", // Directorio raíz de tus archivos fuente (donde está tu código TS)
+    "outDir": "./dist", // Directorio donde se compilará el código JavaScript
+    "baseUrl": "./", // Base URL para resolver las importaciones no relativas (ej. '@modelcontextprotocol/sdk')
+
+    /* --- Opciones de Desarrollo --- */
+    "sourceMap": true, // Genera source maps para depuración
+    "declaration": true // Genera archivos de declaración (.d.ts) para tu código TS (útil si planeas publicar esto como una librería)
+
+    /* --- Opciones Específicas (ej. para Node.js con ES Modules) --- */
+    // Si vas a ejecutar tu código compilado directamente con Node.js usando ES Modules,
+    // podrías necesitar esta opción en tu package.json: "type": "module"
+    // y asegurarte de que la compilación de módulos sea compatible. "ESNext" con "node" resolution suele funcionar bien.
+  },
+  "include": ["./**/*.ts"], // Qué archivos TS debe compilar el compilador
+  "exclude": ["node_modules", "dist"] // Qué archivos/directorios debe ignorar el compilador
+}

@@ -1,0 +1,140 @@
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+
+import EmailClient from '../config/imap-flow';
+
+import {
+  InputGetEmails,
+  OutputGetEmails,
+  type InputGetEmailsType,
+  type OutputGetEmailsType,
+} from '../types/email';
+import { z } from 'zod';
+
+const getEmailHandler = async (
+  params: InputGetEmailsType
+): Promise<OutputGetEmailsType> => {
+  try {
+    const emailClient = new EmailClient();
+
+    const response = await emailClient.fetchEmails(params);
+
+    return response;
+  } catch (error) {
+    return {
+      emails: [],
+      error: `Failed to fetch emails: ${
+        error instanceof Error ? error.message : 'Unknown error'
+      }`,
+    };
+  }
+};
+
+export function registerEmailServices(server: McpServer) {
+  server.registerTool(
+    'get-emails',
+    {
+      title: 'Get Emails',
+      description:
+        "Get emails from the user's inbox. Can specify a subject, date range, or sender to filter results.",
+      annotations: {
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: false,
+        readOnlyHint: true,
+        title: 'Get Emails',
+        params: {
+          subject: {
+            type: 'string',
+            description:
+              'Optional subject to filter emails by subject or sender. Only sent if user provides a subject to search EXPLICITLY!',
+          },
+          dateRange: {
+            type: 'object',
+            description: 'Optional date range to filter emails',
+            properties: {
+              start: {
+                type: 'string',
+                format: 'date-time',
+                description: 'Start date of the range',
+              },
+              end: {
+                type: 'string',
+                format: 'date-time',
+                description: 'End date of the range',
+              },
+            },
+            required: ['start', 'end'],
+          },
+          sender: {
+            type: 'string',
+            description: 'Optional sender email to filter emails',
+          },
+        },
+      },
+      inputSchema: InputGetEmails,
+      outputSchema: OutputGetEmails,
+    },
+    async (params) => {
+      const response = await getEmailHandler(params);
+
+      const emailsPrompt = `
+      Please summarize the following emails in a table format, the columns should include:
+      - Subject
+      - Sender
+      - Date
+      - Snippet
+
+      Only show at most 6 emails in the table. If just mention the amount of emails that was not listed.
+
+      Here are the emails:
+      ${JSON.stringify(response)}
+      `;
+      return {
+        content: [
+          {
+            type: 'text',
+            text: emailsPrompt,
+          },
+        ],
+        structuredContent: response,
+      };
+    }
+  );
+
+  server.registerPrompt(
+    'get-emails-prompt',
+    {
+      title: 'Get Emails Prompt',
+      description:
+        'Prompt to get emails from the user. Can specify a subject, date range, or sender to filter results.',
+      argsSchema: {
+        emailsText: z.string().describe('Text containing email details'),
+      },
+    },
+    ({ emailsText }) => {
+      const emailsPrompt = `
+      Please summarize the following emails in a table format, the columns should include:
+      - Subject
+      - Sender
+      - Date
+      - Snippet
+
+      Only show at most 6 emails in the table. If just mention the amount of emails that was not listed.
+
+      Here are the emails:
+      ${emailsText}
+      `;
+      return {
+        messages: [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: emailsPrompt,
+            },
+          },
+        ],
+      };
+    }
+  );
+}
