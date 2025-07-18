@@ -21,3 +21,14 @@ Setup the env vars:
 3. Use the MCP to fetch emails by providing the necessary parameters such as mailbox, subject, and date range in natural language.
 4. The MCP will return a summary of the emails that match the criteria.
 5. Enjoy it!
+
+
+## Future work
+
+I'll be working on:
+- Improving the email summarization logic.
+- Adding more filters and options for email retrieval.
+- Allow fetch whole body information of the email (text, HTML, attachments, etc.).
+- Allow execute action as marking emails as read, deleting, etc.
+- Add support for multi email accounts. Maybe change the env vars to an array of objects with user and app password.
+- Allow override default prompt for the summarization.
