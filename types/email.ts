@@ -10,11 +10,12 @@ export const InputGetEmails = {
     ),
   dateRange: z
     .object({
-      start: z.string().optional(),
-      end: z.string().optional(),
+      start: z.string().optional().describe('Start date of the range'),
+      end: z.string().optional().describe('End date of the range'),
     })
-    .optional()
-    .describe('Optional date range to filter emails'),
+    .describe(
+      'Date range is a dictionary with the keys "start" and "end". Must be provided on date time ISO string format.'
+    ),
   senders: z
     .array(z.string())
     .optional()

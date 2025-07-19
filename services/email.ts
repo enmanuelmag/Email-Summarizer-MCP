@@ -8,7 +8,6 @@ import {
   type InputGetEmailsType,
   type OutputGetEmailsType,
 } from '../types/email';
-import { z } from 'zod';
 
 const getEmailHandler = async (
   params: InputGetEmailsType
@@ -31,7 +30,7 @@ const getEmailHandler = async (
 
 export function registerEmailServices(server: McpServer) {
   server.registerTool(
-    'get-emails',
+    'search-emails',
     {
       title: 'Get Emails',
       description:
@@ -101,40 +100,40 @@ export function registerEmailServices(server: McpServer) {
     }
   );
 
-  server.registerPrompt(
-    'get-emails-prompt',
-    {
-      title: 'Get Emails Prompt',
-      description:
-        'Prompt to get emails from the user. Can specify a subject, date range, or sender to filter results.',
-      argsSchema: {
-        emailsText: z.string().describe('Text containing email details'),
-      },
-    },
-    ({ emailsText }) => {
-      const emailsPrompt = `
-      Please summarize the following emails in a table format, the columns should include:
-      - Subject
-      - Sender
-      - Date
-      - Snippet
+  // server.registerPrompt(
+  //   'get-emails-prompt',
+  //   {
+  //     title: 'Get Emails Prompt',
+  //     description:
+  //       'Prompt to get emails from the user. Can specify a subject, date range, or sender to filter results.',
+  //     argsSchema: {
+  //       emailsText: z.string().describe('Text containing email details'),
+  //     },
+  //   },
+  //   ({ emailsText }) => {
+  //     const emailsPrompt = `
+  //     Please summarize the following emails in a table format, the columns should include:
+  //     - Subject
+  //     - Sender
+  //     - Date
+  //     - Snippet
 
-      Only show at most 6 emails in the table. If just mention the amount of emails that was not listed.
+  //     Only show at most 6 emails in the table. If just mention the amount of emails that was not listed.
 
-      Here are the emails:
-      ${emailsText}
-      `;
-      return {
-        messages: [
-          {
-            role: 'user',
-            content: {
-              type: 'text',
-              text: emailsPrompt,
-            },
-          },
-        ],
-      };
-    }
-  );
+  //     Here are the emails:
+  //     ${emailsText}
+  //     `;
+  //     return {
+  //       messages: [
+  //         {
+  //           role: 'user',
+  //           content: {
+  //             type: 'text',
+  //             text: emailsPrompt,
+  //           },
+  //         },
+  //       ],
+  //     };
+  //   }
+  // );
 }

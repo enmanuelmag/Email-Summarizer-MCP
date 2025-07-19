@@ -6,6 +6,7 @@
   "main": "dist/main.js",
   "scripts": {
     "dev": "tsx ./main.ts",
+    "serve": "tsx ./server.ts",
     "start": "node dist/main.js",
     "build": "tsc --project tsconfig.json"
   },
@@ -15,8 +16,14 @@
   "packageManager": "pnpm@10.12.4",
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.15.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "imapflow": "^1.0.191",
     "luxon": "^3.7.1",
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.0.0",
     "tsx": "^4.20.3",
     "zod": "3.23.8"
   },
