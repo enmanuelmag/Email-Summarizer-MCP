@@ -11,6 +11,8 @@ const server = new McpServer({
 registerEmailServices(server);
 
 const transport = new StdioServerTransport();
-await server.connect(transport).catch(() => {
-  throw new Error('Failed to start server');
+
+await server.connect(transport).catch((error) => {
+  console.error('Failed to connect server:', error);
+  process.exit(1);
 });

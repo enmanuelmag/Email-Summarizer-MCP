@@ -9,40 +9,33 @@ import { registerEmailServices } from 'services/email';
 const app = express();
 app.use(express.json());
 
-// Map to store transports by session ID
+console.log('MCP Server: Initializing...');
+
 const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
 
-// Handle POST requests for client-to-server communication
 app.post('/mcp', async (req, res) => {
-  // Check for existing session ID
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
   let transport: StreamableHTTPServerTransport;
 
   if (sessionId && transports[sessionId]) {
-    // Reuse existing transport
     transport = transports[sessionId];
   } else if (!sessionId && isInitializeRequest(req.body)) {
-    // New initialization request
     transport = new StreamableHTTPServerTransport({
+      // enableDnsRebindingProtection: false,
+      // allowedHosts: ['127.0.0.1', 'localhost'],
       sessionIdGenerator: () => randomUUID(),
       onsessioninitialized: (sessionId) => {
-        // Store the transport by session ID
         transports[sessionId] = transport;
       },
-      // DNS rebinding protection is disabled by default for backwards compatibility. If you are running this server
-      // locally, make sure to set:
-      // enableDnsRebindingProtection: true,
-      // allowedHosts: ['127.0.0.1'],
     });
 
-    // Clean up transport when closed
     transport.onclose = () => {
       if (transport.sessionId) {
         delete transports[transport.sessionId];
       }
     };
     const server = new McpServer({
-      name: 'example-server',
+      name: 'email-summarizer',
       version: '1.0.0',
     });
 
@@ -90,6 +83,10 @@ app.get('/mcp', handleSessionRequest);
 
 app.delete('/mcp', handleSessionRequest);
 
-app.listen(5555, () => {
-  console.log('Server is running on http://localhost:5555');
+app.listen(5555, (error) => {
+  if (error) {
+    console.error('MCP Server: Failed to start:', error);
+    process.exit(1);
+  }
+  console.log('MCP Server: Listening on http://localhost:5555');
 });
