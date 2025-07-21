@@ -59,15 +59,41 @@ class EmailClient {
         }
       }
 
+      const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      if (params.dateRange.start) {
+        params.dateRange.start = params.dateRange.start.replace(
+          /Z|GMT-[0-9]+/g,
+          ''
+        );
+      }
+      if (params.dateRange.end) {
+        params.dateRange.end = params.dateRange.end.replace(
+          /Z|GMT-[0-9]+/g,
+          ''
+        );
+      }
+
+      let sinceDate = params.dateRange?.start
+        ? DateTime.fromISO(params.dateRange.start)
+        : defaultStartDate;
+
+      let beforeDate = params.dateRange?.end
+        ? DateTime.fromISO(params.dateRange.end)
+        : defaultEndDate;
+
+      if (params.dateRange.start) {
+        sinceDate = sinceDate.setZone(localTimezone, { keepLocalTime: true });
+      }
+      if (params.dateRange.end) {
+        beforeDate = beforeDate.setZone(localTimezone, { keepLocalTime: true });
+      }
+
       const searchCriteria: SearchObject = {
         subject: params.subject,
-        since: params.dateRange?.start
-          ? DateTime.fromISO(params.dateRange.start).toJSDate()
-          : defaultStartDate.toJSDate(),
-        before: params.dateRange?.end
-          ? DateTime.fromISO(params.dateRange.end).toJSDate()
-          : defaultEndDate.toJSDate(),
-        or: orConditions,
+        since: sinceDate.toJSDate()!,
+        before: beforeDate.toJSDate()!,
+        or: orConditions.length > 0 ? orConditions : undefined,
       };
 
       const messagesUIDs = await this.client.search(searchCriteria, {
@@ -98,6 +124,15 @@ class EmailClient {
 
         if (!message) {
           continue;
+        }
+
+        if (message.envelope?.date) {
+          const emailDate = DateTime.fromJSDate(message.envelope.date);
+
+          const isInRange = emailDate >= sinceDate && emailDate < beforeDate;
+          if (!isInRange) {
+            continue;
+          }
         }
 
         const senderParsed =
