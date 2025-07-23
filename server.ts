@@ -13,6 +13,14 @@ console.log('MCP Server: Initializing...');
 
 const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
 
+app.use(
+  cors({
+    origin: '*',
+    exposedHeaders: ['Mcp-Session-Id'],
+    allowedHeaders: ['Content-Type', 'mcp-session-id'],
+  })
+);
+
 app.post('/mcp', async (req, res) => {
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
   let transport: StreamableHTTPServerTransport;
@@ -21,8 +29,7 @@ app.post('/mcp', async (req, res) => {
     transport = transports[sessionId];
   } else if (!sessionId && isInitializeRequest(req.body)) {
     transport = new StreamableHTTPServerTransport({
-      // enableDnsRebindingProtection: false,
-      // allowedHosts: ['127.0.0.1', 'localhost'],
+      enableDnsRebindingProtection: true,
       sessionIdGenerator: () => randomUUID(),
       onsessioninitialized: (sessionId) => {
         transports[sessionId] = transport;
@@ -70,14 +77,6 @@ const handleSessionRequest = async (
   const transport = transports[sessionId];
   await transport.handleRequest(req, res);
 };
-
-app.use(
-  cors({
-    origin: '*',
-    exposedHeaders: ['Mcp-Session-Id'],
-    allowedHeaders: ['Content-Type', 'mcp-session-id'],
-  })
-);
 
 app.get('/mcp', handleSessionRequest);
 
