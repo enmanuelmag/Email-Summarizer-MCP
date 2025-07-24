@@ -16,11 +16,51 @@ Setup the env vars:
 - `MCP_EMAIL_APP_PASSWORD`: Your email app password (you will need to generate this from your email provider).
 
 ## Usage
-1. Ensure you have the required environment variables set up in your `.zshrc` or equivalent shell configuration file.
-2. Add the MCP to your LLM agent of your preference (follow the specific instructions for your LLM, framework or app).
-3. Use the MCP to fetch emails by providing the necessary parameters such as mailbox, subject, and date range in natural language.
-4. The MCP will return a summary of the emails that match the criteria.
-5. Enjoy it!
+
+### Command (Without Docker)
+1. Install dependencies `pnpm install`.
+2. Add the configuration to your app client.
+3. Ensure add EMAIL_USERNAME, EMAIL_PASSWORD, EMAIL_PORT, EMAIL_CLIENT_TYPE as environment variables.
+```json
+"email-stdio": {
+  "command": "npx",
+  "args": [
+    "-y",
+    "tsx",
+    "path/to/mcp/folder/main.ts"
+  ]
+}
+```
+
+### Command (With Docker)
+1. Build the Docker image `pnpm run docker:build`
+2. Add the configuration to your app client.
+```json
+"email-dock": {
+  "command": "docker",
+  "args": [
+    "run",
+    "-i",
+    "--rm",
+    "-e",
+    "EMAIL_USERNAME=<your-email>",
+    "-e",
+    "EMAIL_PASSWORD=<your-app-password>",
+    "email-summarizer"
+  ]
+}
+```
+
+### Stream HTTP requests
+You can also use the HTTP API to interact with the email summarizer. The API expects the following headers:
+- Build the MCP `pnpm run build`
+- Start the MCP `pnpm run start`
+- Use the MCP serve to `http://localhost:5555/mcp`
+  - Send in heders:
+    - `email-username`: Your email address.
+    - `email-password`: Your email app password.
+    - `email-port`: The port for the IMAP server (default is 993).
+    - `email-client-type`: The type of email client (default is 'gmail').
 
 
 ## Future work
