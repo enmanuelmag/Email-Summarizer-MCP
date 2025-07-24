@@ -31,7 +31,9 @@ class EmailClient {
         },
       });
     } catch (error) {
-      throw new Error('Failed to initialize email client');
+      throw new Error(
+        `Fail INIT ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 

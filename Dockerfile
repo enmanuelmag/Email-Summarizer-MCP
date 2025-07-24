@@ -3,14 +3,15 @@ FROM node:22-slim
 WORKDIR /app
 
 COPY package.json ./
-COPY pnpm-lock.yaml ./
+COPY package-lock.json ./
+# COPY pnpm-lock.yaml ./
 
-RUN npm install -g pnpm
+# RUN npm install -g pnpm
 
-RUN pnpm install --frozen-lockfile --prod
+RUN npm install
 
 COPY . .
 
-RUN pnpm run build
+RUN npm run build
 
 CMD [ "node", "dist/main.js" ]
