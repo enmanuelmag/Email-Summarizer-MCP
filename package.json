@@ -9,10 +9,10 @@
     "serve": "tsx ./server.ts",
     "start": "node dist/main.js",
     "build": "tsc && tsc-alias && ts-add-js-extension --dir=dist",
-    "build:docker": "docker build -t email-summarizer .",
+    "docker:build": "docker build -t email-summarizer .",
     "docker:start": "docker compose up",
-    "stop": "docker compose down",
-    "build-and-start": "npm run build:docker && docker compose up -d",
+    "docker:stop": "docker compose down",
+    "docker:build-and-start": "npm run build:docker && docker compose up -d",
     "docker:remove": "docker compose down --rmi all --volumes --remove-orphans"
   },
   "keywords": [],

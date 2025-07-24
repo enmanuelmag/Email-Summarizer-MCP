@@ -8,6 +8,11 @@ services:
       dockerfile: Dockerfile
     stdin_open: true
     tty: true
+    environment:
+      - EMAIL_PORT
+      - EMAIL_USERNAME
+      - EMAIL_PASSWORD
+      - EMAIL_CLIENT_TYPE
 
 networks:
   mcp_network:
