@@ -4,12 +4,14 @@ import { randomUUID } from 'node:crypto';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
+
 import { registerEmailServices } from 'services/email';
+import { Logger } from 'utils/logger';
 
 const app = express();
 app.use(express.json());
 
-console.log('MCP Server: Initializing...');
+Logger.info('Initializing MCP Server');
 
 const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
 
@@ -17,7 +19,12 @@ app.use(
   cors({
     origin: '*',
     exposedHeaders: ['Mcp-Session-Id'],
-    allowedHeaders: ['Content-Type', 'mcp-session-id'],
+    allowedHeaders: [
+      'Content-Type',
+      'mcp-session-id',
+      'EMAIL-USERNAME',
+      'EMAIL-PASSWORD',
+    ],
   })
 );
 
@@ -29,7 +36,7 @@ app.post('/mcp', async (req, res) => {
     transport = transports[sessionId];
   } else if (!sessionId && isInitializeRequest(req.body)) {
     transport = new StreamableHTTPServerTransport({
-      enableDnsRebindingProtection: true,
+      // enableDnsRebindingProtection: true,
       sessionIdGenerator: () => randomUUID(),
       onsessioninitialized: (sessionId) => {
         transports[sessionId] = transport;
@@ -61,6 +68,15 @@ app.post('/mcp', async (req, res) => {
     return;
   }
 
+  // req.body.email = req.headers['EMAIL-USERNAME'];
+  // req.body.password = req.headers['EMAIL-PASSWORD'];
+
+  // const body = {
+  //   ...req.body,
+  //   email: req.headers['EMAIL-USERNAME'],
+  //   password: req.headers['EMAIL-PASSWORD'],
+  // };
+
   await transport.handleRequest(req, res, req.body);
 });
 
@@ -84,8 +100,8 @@ app.delete('/mcp', handleSessionRequest);
 
 app.listen(5555, (error) => {
   if (error) {
-    console.error('MCP Server: Failed to start:', error);
+    Logger.error('Failed to start MCP Server:', error);
     process.exit(1);
   }
-  console.log('MCP Server: Listening on http://localhost:5555');
+  Logger.info('MCP Server: Listening on http://localhost:5555');
 });

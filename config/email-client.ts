@@ -1,36 +1,54 @@
 import { ImapFlow, SearchObject } from 'imapflow';
 import { DateTime } from 'luxon';
 
-import { InputGetEmailsType, OutputGetEmailsType } from '../types/email';
-import ENV from '../env';
-
-const validatedConfig = {
-  user: ENV.MCP_EMAIL_USER,
-  appPassword: ENV.MCP_EMAIL_APP_PASSWORD,
-};
+import {
+  AuthEmailType,
+  InputGetEmailsType,
+  OutputGetEmailsType,
+} from '../types/email';
 
 class EmailClient {
   private client: ImapFlow;
 
-  constructor() {
-    if (!validatedConfig.user || !validatedConfig.appPassword) {
-      throw new Error(
-        'Email user and app password must be set in environment variables.'
-      );
-    }
-
+  constructor(params: AuthEmailType) {
     try {
+      const { host, port } = this.getHost(params.clientType);
+
       this.client = new ImapFlow({
-        host: 'imap.gmail.com',
-        port: 993,
+        host,
         secure: true,
+        emitLogs: false,
+        logger: undefined,
+        port: params.port ? parseInt(params.port, 10) : port,
         auth: {
-          user: validatedConfig.user,
-          pass: validatedConfig.appPassword,
+          user: params.email,
+          pass: params.password,
         },
       });
     } catch (error) {
       throw new Error('Failed to initialize email client');
+    }
+  }
+
+  private getHost(clientType: AuthEmailType['clientType']) {
+    switch (clientType) {
+      case 'gmail':
+        return {
+          host: 'imap.gmail.com',
+          port: 993,
+        };
+      case 'outlook':
+        return {
+          host: 'outlook.office365.com',
+          port: 993,
+        };
+      case 'yahoo':
+        return {
+          host: 'imap.mail.yahoo.com',
+          port: 993,
+        };
+      default:
+        throw new Error('Unsupported email client type');
     }
   }
 

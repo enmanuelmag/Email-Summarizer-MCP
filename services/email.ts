@@ -1,8 +1,9 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
-import EmailClient from '../config/imap-flow';
+import EmailClient from '../config/email-client';
 
 import {
+  AuthEmailType,
   InputGetEmails,
   OutputGetEmails,
   type InputGetEmailsType,
@@ -10,14 +11,13 @@ import {
 } from '../types/email';
 
 const getEmailHandler = async (
-  params: InputGetEmailsType
+  params: InputGetEmailsType,
+  authEmail: AuthEmailType
 ): Promise<OutputGetEmailsType> => {
   try {
-    const emailClient = new EmailClient();
+    const emailClient = new EmailClient(authEmail);
 
-    const response = await emailClient.fetchEmails(params);
-
-    return response;
+    return await emailClient.fetchEmails(params);
   } catch (error) {
     return {
       emails: [],
@@ -73,8 +73,15 @@ export function registerEmailServices(server: McpServer) {
       inputSchema: InputGetEmails,
       outputSchema: OutputGetEmails,
     },
-    async (params) => {
-      const response = await getEmailHandler(params);
+    async (params, { requestInfo }) => {
+      const authEmail = {
+        port: requestInfo?.headers['email-port'],
+        email: requestInfo?.headers['email-username'],
+        password: requestInfo?.headers['email-password'],
+        clientType: requestInfo?.headers['email-client-type'] || 'gmail',
+      } as AuthEmailType;
+
+      const response = await getEmailHandler(params, authEmail);
 
       const emailsPrompt = `
       Please summarize the following emails in a table format, the columns should include:

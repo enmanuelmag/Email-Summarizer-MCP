@@ -1,5 +1,27 @@
 import { z } from 'zod';
 
+export const AuthEmail = {
+  email: z
+    .string()
+    .email()
+    .describe('Email address of the user')
+    .describe('Email address of the user'),
+  password: z
+    .string()
+    .min(6)
+    .describe('Password of the user')
+    .describe('Password of the user'),
+  clientType: z
+    .enum(['gmail', 'outlook', 'yahoo'])
+    .describe('Type of email client to use'),
+  port: z
+    .string()
+    .nullish()
+    .describe('Port to connect to the email server, defaults to 993 for IMAP'),
+} as const;
+export const AuthEmailSchema = z.object(AuthEmail);
+export type AuthEmailType = z.infer<typeof AuthEmailSchema>;
+
 export const InputGetEmails = {
   mailbox: z.string().default('INBOX').describe('Mailbox to fetch emails from'),
   subject: z
