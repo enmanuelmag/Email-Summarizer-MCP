@@ -1,29 +1,30 @@
 {
   "compilerOptions": {
-    /* --- Configuración General --- */
-    "strictNullChecks": true,
-    "target": "ES2020", // Versión mínima de JavaScript a la que compilar (ES2020 es un buen punto de partida, compatible con Node.js moderno)
-    "module": "ESNext", // Cómo se deben manejar los módulos (ESNext es moderno y funciona bien con imports/exports)
-    "moduleResolution": "bundler", // Cómo el compilador encuentra los módulos (Node para proyectos Node.js)
-    "strict": true, // Habilita todas las opciones de estrictez (muy recomendable para evitar errores)
-    "esModuleInterop": true, // Permite la interoperabilidad entre módulos CommonJS y ES Modules (ayuda con imports de librerías)
-    "skipLibCheck": true, // Omite la comprobación de tipos de archivos de declaración (.d.ts) de dependencias (acelera la compilación)
-    "forceConsistentCasingInFileNames": true, // Asegura que los nombres de archivo tengan la misma capitalización en todo el proyecto
+    /* Basic Options */
+    "target": "ES2020", // O "ES2020", "ESNext" - especifica el estándar de JS de salida. ES2016 es una buena base.
+    "module": "ESNext", // Para Node.js, CommonJS es el estándar.
+    "outDir": "./dist", // Directorio donde se guardarán los archivos .js compilados.
+    "rootDir": "./src", // Directorio raíz de tus archivos .ts. Todo lo que esté aquí se compilará.
 
-    /* --- Rutas y Salida --- */
-    "rootDir": "./", // Directorio raíz de tus archivos fuente (donde está tu código TS)
-    "outDir": "./dist", // Directorio donde se compilará el código JavaScript
-    "baseUrl": "./", // Base URL para resolver las importaciones no relativas (ej. '@modelcontextprotocol/sdk')
+    /* Strict Type-Checking Options */
+    "strict": true, // Habilita todas las opciones de verificación estricta de tipos. Muy recomendado.
+    "esModuleInterop": true, // Permite la interoperabilidad entre módulos CommonJS y ES Modules. Crucial para importar librerías.
+    "skipLibCheck": true, // Omite la verificación de tipos de archivos de declaración (.d.ts) en los módulos.
 
-    /* --- Opciones de Desarrollo --- */
-    "sourceMap": true, // Genera source maps para depuración
-    "declaration": true // Genera archivos de declaración (.d.ts) para tu código TS (útil si planeas publicar esto como una librería)
+    /* Module Resolution Options */
+    "moduleResolution": "node", // Cómo el compilador busca módulos. "node" es el estándar para Node.js.
 
-    /* --- Opciones Específicas (ej. para Node.js con ES Modules) --- */
-    // Si vas a ejecutar tu código compilado directamente con Node.js usando ES Modules,
-    // podrías necesitar esta opción en tu package.json: "type": "module"
-    // y asegurarte de que la compilación de módulos sea compatible. "ESNext" con "node" resolution suele funcionar bien.
+    /* Source Map Options */
+    "sourceMap": true, // Genera archivos .map para poder depurar el código TS en el navegador o con Node.js.
+
+    /* Advanced Options */
+    "forceConsistentCasingInFileNames": true // Asegura que los nombres de archivo tengan un casing consistente.
   },
-  "include": ["./**/*.ts"], // Qué archivos TS debe compilar el compilador
-  "exclude": ["node_modules", "dist"] // Qué archivos/directorios debe ignorar el compilador
+  "include": [
+    "src/**/*" // Incluye todos los archivos dentro del directorio 'src' y sus subdirectorios.
+  ],
+  "exclude": [
+    "node_modules", // Excluye la carpeta node_modules de la compilación.
+    "dist" // Excluye la carpeta dist, ya que es el resultado de la compilación.
+  ]
 }

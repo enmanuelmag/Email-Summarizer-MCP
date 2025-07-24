@@ -69,7 +69,7 @@ class EmailClient {
 
       const defaultEndDate = DateTime.now().endOf('day');
 
-      const orConditions = [];
+      const orConditions: Array<{ from: string }> = [];
 
       if (params.senders) {
         for (const sender of params.senders) {
