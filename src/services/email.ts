@@ -75,15 +75,10 @@ export function registerEmailServices(server: McpServer) {
     },
     async (params, { requestInfo }) => {
       const authEmail = {
-        port: process.env.EMAIL_PORT || requestInfo?.headers['email-port'],
-        email:
-          process.env.EMAIL_USERNAME || requestInfo?.headers['email-username'],
-        password:
-          process.env.EMAIL_PASSWORD || requestInfo?.headers['email-password'],
-        clientType:
-          process.env.EMAIL_CLIENT_TYPE ||
-          requestInfo?.headers['email-client-type'] ||
-          'gmail',
+        port: requestInfo?.headers['email-port'],
+        email: requestInfo?.headers['email-username'],
+        password: requestInfo?.headers['email-password'],
+        clientType: requestInfo?.headers['email-client-type'],
       } as AuthEmailType;
 
       const response = await getEmailHandler(params, authEmail);

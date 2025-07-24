@@ -12,17 +12,22 @@ class EmailClient {
 
   constructor(params: AuthEmailType) {
     try {
-      const { host, port } = this.getHost(params.clientType);
+      const { host, port } = this.getHost(
+        (process.env.EMAIL_CLIENT_TYPE as AuthEmailType['clientType']) ||
+          params.clientType
+      );
 
       this.client = new ImapFlow({
         host,
         secure: true,
         emitLogs: false,
         logger: undefined,
-        port: params.port ? parseInt(params.port, 10) : port,
+        port: process.env.EMAIL_PORT
+          ? parseInt(process.env.EMAIL_PORT, 10)
+          : port,
         auth: {
-          user: params.email,
-          pass: params.password,
+          user: process.env.EMAIL_USERNAME || params.email,
+          pass: process.env.EMAIL_PASSWORD || params.password,
         },
       });
     } catch (error) {
