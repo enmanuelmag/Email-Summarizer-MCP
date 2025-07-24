@@ -88,9 +88,7 @@ export function registerEmailServices(server: McpServer) {
 
       const response = await getEmailHandler(params, authEmail);
 
-      const emailsPrompt = `
-      Metadata: ${JSON.stringify(authEmail)}
-      Please summarize the following emails in a table format, the columns should include:
+      const emailsPrompt = `Please summarize the following emails in a table format, the columns should include:
       - Subject
       - Sender
       - Date

@@ -13,7 +13,8 @@
     "docker:start": "docker compose up",
     "docker:stop": "docker compose down",
     "docker:build-and-start": "npm run build:docker && docker compose up -d",
-    "docker:remove": "docker compose down --rmi all --volumes --remove-orphans"
+    "docker:remove": "docker compose down --rmi all --volumes --remove-orphans",
+    "docker:remove:img": "docker rmi email-summarizer --force"
   },
   "keywords": [],
   "author": "",
