@@ -22,34 +22,21 @@ Setup the env vars:
 2. Add the configuration to your app client.
 ```json
 "email-summarizer": {
+  "type": "stdio", // Maybe your client MCP require specific type, like 'stdio'
   "command": "cardor-email-summarizer",
   "env": {
-    "EMAIL_USERNAME": "<your-email>",
-    "EMAIL_PASSWORD": "<your-app-password>",
-    "EMAIL_PORT": "993", 
-    "EMAIL_CLIENT_TYPE": "gmail"
+    "EMAIL_USERNAME": "<your-email>", // Your email address.
+    "EMAIL_PASSWORD": "<your-app-password>", // Your email app password.
+    "EMAIL_PORT": "993",  // The port for the IMAP server (default is 993).
+    "EMAIL_CLIENT_TYPE": "gmail" // The type of email client: gmail, outlook, yahoo, etc (default is 'gmail').
   }
 }
 ```
 
-### Command (Without Docker)
-1. Install dependencies `pnpm install`.
-2. Add the configuration to your app client.
-3. Ensure add EMAIL_USERNAME, EMAIL_PASSWORD, EMAIL_PORT, EMAIL_CLIENT_TYPE as environment variables.
-```json
-"email-stdio": {
-  "command": "npx",
-  "args": [
-    "-y",
-    "tsx",
-    "path/to/mcp/folder/main.ts"
-  ]
-}
-```
-
 ### Command (With Docker)
-1. Build the Docker image `pnpm run docker:build`
-2. Add the configuration to your app client.
+1. Clone the repository `git clone <repository-url>`
+2. Build the Docker image `pnpm run docker:build`
+3. Add the configuration to your app client.
 ```json
 "email-dock": {
   "command": "docker",
