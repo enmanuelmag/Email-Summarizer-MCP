@@ -5,12 +5,19 @@ import EmailClient from '../config/email-client';
 import {
   AuthEmailType,
   InputGetEmails,
+  InputMarkEmailsAsRead,
   OutputGetEmails,
-  type InputGetEmailsType,
-  type OutputGetEmailsType,
+  OutputMarkEmailsAsRead,
 } from '../types/email';
 
-const getEmailHandler = async (
+import type {
+  InputGetEmailsType,
+  OutputGetEmailsType,
+  InputMarkEmailsAsReadType,
+} from '../types/email';
+import { FETCH_EMAILS_PROMPT } from '../constants/email';
+
+const fetchEmailsHandler = async (
   params: InputGetEmailsType,
   authEmail: AuthEmailType
 ): Promise<OutputGetEmailsType> => {
@@ -26,6 +33,44 @@ const getEmailHandler = async (
       }`,
     };
   }
+};
+
+const markEmailsAsReadHandler = async (
+  params: InputMarkEmailsAsReadType,
+  authEmail: AuthEmailType
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const emailClient = new EmailClient(authEmail);
+
+    await emailClient.markEmailsAsRead(params);
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: `Failed to mark emails as read: ${
+        error instanceof Error ? error.message : 'Unknown error'
+      }`,
+    };
+  }
+};
+
+const parseResponsePrompt = (
+  response: OutputGetEmailsType,
+  prompt?: string
+) => {
+  if (!response.emails || response.emails.length === 0) {
+    return 'No emails found matching the criteria.';
+  }
+
+  const emailsPrompt = prompt || FETCH_EMAILS_PROMPT;
+
+  const emailsContent = emailsPrompt.replace(
+    '{{emails}}',
+    JSON.stringify(response.emails)
+  );
+
+  return emailsContent;
 };
 
 export function registerEmailServices(server: McpServer) {
@@ -81,68 +126,81 @@ export function registerEmailServices(server: McpServer) {
         clientType: requestInfo?.headers['email-client-type'],
       } as AuthEmailType;
 
-      const response = await getEmailHandler(params, authEmail);
+      const responseEmails = await fetchEmailsHandler(params, authEmail);
 
-      const emailsPrompt = `Data for ${
-        authEmail.email || process.env.EMAIL_USERNAME
+      if (responseEmails.error) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: responseEmails.error,
+            },
+          ],
+          structuredContent: responseEmails,
+          isError: true,
+        };
       }
-      Please summarize the following emails in a table format, the columns should include:
-      - Subject
-      - Sender
-      - Date
-      - Snippet
 
-      Only show at most 6 emails in the table. If just mention the amount of emails that was not listed.
+      if (!responseEmails.emails || responseEmails.emails.length === 0) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: 'No emails found matching the criteria.',
+            },
+          ],
+          structuredContent: responseEmails,
+        };
+      }
 
-      Here are the emails:
-      ${JSON.stringify(response)}
-      `;
+      const finalPrompt =
+        String(requestInfo?.headers['email-prompt']) ||
+        process.env.EMAIL_PROMPT ||
+        FETCH_EMAILS_PROMPT;
+
+      const finalResponse = parseResponsePrompt(responseEmails, finalPrompt);
       return {
         content: [
           {
             type: 'text',
-            text: emailsPrompt,
+            text: finalResponse,
           },
         ],
-        structuredContent: response,
+        structuredContent: responseEmails,
       };
     }
   );
 
-  // server.registerPrompt(
-  //   'get-emails-prompt',
-  //   {
-  //     title: 'Get Emails Prompt',
-  //     description:
-  //       'Prompt to get emails from the user. Can specify a subject, date range, or sender to filter results.',
-  //     argsSchema: {
-  //       emailsText: z.string().describe('Text containing email details'),
-  //     },
-  //   },
-  //   ({ emailsText }) => {
-  //     const emailsPrompt = `
-  //     Please summarize the following emails in a table format, the columns should include:
-  //     - Subject
-  //     - Sender
-  //     - Date
-  //     - Snippet
+  server.registerTool(
+    'mark-emails-as-read',
+    {
+      title: 'Mark Emails as Read',
+      description: "Mark specified emails as read in the user's inbox.",
+      inputSchema: InputMarkEmailsAsRead,
+      outputSchema: OutputMarkEmailsAsRead,
+    },
+    async (params, { requestInfo }) => {
+      const authEmail = {
+        port: requestInfo?.headers['email-port'],
+        email: requestInfo?.headers['email-username'],
+        password: requestInfo?.headers['email-password'],
+        clientType: requestInfo?.headers['email-client-type'],
+      } as AuthEmailType;
 
-  //     Only show at most 6 emails in the table. If just mention the amount of emails that was not listed.
+      const result = await markEmailsAsReadHandler(params, authEmail);
 
-  //     Here are the emails:
-  //     ${emailsText}
-  //     `;
-  //     return {
-  //       messages: [
-  //         {
-  //           role: 'user',
-  //           content: {
-  //             type: 'text',
-  //             text: emailsPrompt,
-  //           },
-  //         },
-  //       ],
-  //     };
-  //   }
-  // );
+      return {
+        content: [
+          {
+            type: 'text',
+            text: result.success
+              ? 'Emails marked as read successfully.'
+              : `Failed to mark emails as read: ${result.error}`,
+          },
+        ],
+        structuredContent: result,
+        isError: !result.success,
+      };
+    }
+  );
 }

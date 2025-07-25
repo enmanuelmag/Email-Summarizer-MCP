@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// Auth Email Schema
 export const AuthEmail = {
   email: z
     .string()
@@ -22,6 +23,7 @@ export const AuthEmail = {
 export const AuthEmailSchema = z.object(AuthEmail);
 export type AuthEmailType = z.infer<typeof AuthEmailSchema>;
 
+// Search Email Schemas
 export const InputGetEmails = {
   mailbox: z.string().default('INBOX').describe('Mailbox to fetch emails from'),
   subject: z
@@ -43,7 +45,6 @@ export const InputGetEmails = {
     .optional()
     .describe('Optional array of email addresses to filter emails by sender'),
 } as const;
-
 const InputGetEmailsSchema = z.object(InputGetEmails);
 export type InputGetEmailsType = z.infer<typeof InputGetEmailsSchema>;
 
@@ -63,3 +64,21 @@ export const OutputGetEmails = {
 } as const;
 const OutputGetEmailsSchema = z.object(OutputGetEmails);
 export type OutputGetEmailsType = z.infer<typeof OutputGetEmailsSchema>;
+
+// Mark Emails as Read Schemas
+export const InputMarkEmailsAsRead = {
+  ids: z.array(z.number()).describe('Array of email IDs to mark as read'),
+} as const;
+const InputMarkEmailsAsReadSchema = z.object(InputMarkEmailsAsRead);
+export type InputMarkEmailsAsReadType = z.infer<
+  typeof InputMarkEmailsAsReadSchema
+>;
+
+export const OutputMarkEmailsAsRead = {
+  success: z.boolean(),
+  error: z.string().nullish(),
+} as const;
+const OutputMarkEmailsAsReadSchema = z.object(OutputMarkEmailsAsRead);
+export type OutputMarkEmailsAsReadType = z.infer<
+  typeof OutputMarkEmailsAsReadSchema
+>;

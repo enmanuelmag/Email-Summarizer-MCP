@@ -28,7 +28,8 @@ Setup the env vars:
     "EMAIL_USERNAME": "<your-email>", // Your email address.
     "EMAIL_PASSWORD": "<your-app-password>", // Your email app password.
     "EMAIL_PORT": "993",  // The port for the IMAP server (default is 993).
-    "EMAIL_CLIENT_TYPE": "gmail" // The type of email client: gmail, outlook, yahoo, etc (default is 'gmail').
+    "EMAIL_CLIENT_TYPE": "gmail", // The type of email client: gmail, outlook, yahoo, etc (default is 'gmail').
+    "EMAIL_PROMPT": "Summarize the following emails: {{emails}}" // Custom prompt for summarization. Must include `{{emails}}` to insert the email content.
   }
 }
 ```
@@ -48,7 +49,13 @@ Setup the env vars:
     "EMAIL_USERNAME=<your-email>",
     "-e",
     "EMAIL_PASSWORD=<your-app-password>",
-    "email-summarizer"
+    "-e",
+    "EMAIL_PORT=993",
+    "-e",
+    "EMAIL_CLIENT_TYPE=gmail",
+    "-e",
+    "EMAIL_PROMPT=Summarize the following emails: {{emails}}", // Custom prompt for summarization. Must include `{{emails}}` to insert the email content.
+    "email-summarizer",
   ]
 }
 ```
@@ -63,14 +70,13 @@ You can also use the HTTP API to interact with the email summarizer. The API exp
     - `email-password`: Your email app password.
     - `email-port`: The port for the IMAP server (default is 993).
     - `email-client-type`: The type of email client (default is 'gmail').
+    - `email-prompt`: Custom prompt for summarization (default is 'Summarize the following emails: {{emails}}'). Must include `{{emails}}` to insert the email content.
 
 
 ## Future work
 
 I'll be working on:
-- Improving the email summarization logic.
-- Adding more filters and options for email retrieval.
-- Allow fetch whole body information of the email (text, HTML, attachments, etc.).
-- Allow execute action as marking emails as read, deleting, etc.
-- Add support for multi email accounts. Maybe change the env vars to an array of objects with user and app password.
-- Allow override default prompt for the summarization.
+- [x] Allow execute action as marking emails as read, deleting, etc.
+- [x] Allow override default prompt for the summarization.
+- [ ] Adding more filters and options for email retrieval.
+- [ ] Allow fetch whole body information of the email (text, HTML, attachments, etc.).

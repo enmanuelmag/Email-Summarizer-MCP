@@ -12,6 +12,9 @@
     "esModuleInterop": true, // Permite la interoperabilidad entre módulos CommonJS y ES Modules. Crucial para importar librerías.
     "skipLibCheck": true, // Omite la verificación de tipos de archivos de declaración (.d.ts) en los módulos.
 
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+
     /* Module Resolution Options */
     "moduleResolution": "node", // Cómo el compilador busca módulos. "node" es el estándar para Node.js.
 

@@ -4,8 +4,10 @@ import { DateTime } from 'luxon';
 import {
   AuthEmailType,
   InputGetEmailsType,
+  InputMarkEmailsAsReadType,
   OutputGetEmailsType,
 } from '../types/email';
+import { handleError } from '../decorators/handle-error';
 
 class EmailClient {
   private client: ImapFlow;
@@ -59,14 +61,15 @@ class EmailClient {
     }
   }
 
-  async connect() {
+  private async connect() {
     await this.client.connect();
   }
 
-  async disconnect() {
+  private async disconnect() {
     await this.client.logout();
   }
 
+  @handleError('Failed to fetch emails')
   async fetchEmails(params: InputGetEmailsType) {
     try {
       await this.connect();
@@ -183,16 +186,35 @@ class EmailClient {
         emails: emailsParsed,
       };
     } catch (error) {
+      return { emails: [], error: 'Failed to fetch emails' };
+    } finally {
       await this.disconnect();
       await this.client.mailboxClose();
-      return { emails: [], error: 'Failed to fetch emails' };
     }
   }
 
-  async markAsRead(emailId: number) {
-    return await this.client.messageFlagsAdd([emailId], ['\\Seen'], {
-      uid: true,
-    });
+  @handleError('Failed to mark emails as read')
+  async markEmailsAsRead(params: InputMarkEmailsAsReadType) {
+    const { ids } = params;
+
+    try {
+      await this.connect();
+      await this.client.mailboxOpen('INBOX');
+
+      await this.client.messageFlagsAdd(ids, ['\\Seen'], {
+        uid: true,
+      });
+    } catch (error) {
+      return {
+        success: false,
+        error: `Failed to mark emails as read: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      };
+    } finally {
+      await this.disconnect();
+      await this.client.mailboxClose();
+    }
   }
 }
 
