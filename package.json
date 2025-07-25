@@ -1,5 +1,5 @@
 {
-  "name": "email-summarizer",
+  "name": "@cardor/email-summarizer",
   "version": "1.0.0",
   "description": "A Node.js application for summarizing emails using the ModelContextProtocol (MCP).",
   "type": "module",
