@@ -62,10 +62,12 @@ This project is designed to summarize emails using a custom IMAP client to conne
 
 ### Stream HTTP requests
 You can also use the HTTP API to interact with the email summarizer. The API expects the following headers:
-- Build the MCP `pnpm run build`
-- Start the MCP `pnpm run start`
-- Use the MCP serve to `http://localhost:5555/mcp`
-  - Send in heders:
+1. Clone the repository `git clone <repository-url>`
+2. Install dependencies `pnpm install`
+3. Build the MCP `pnpm run build`
+4. Start the MCP `pnpm run start`
+5. Use the MCP serve to `http://localhost:5555/mcp`
+  - Send in headers:
     - `email-username`: Your email address.
     - `email-password`: Your email app password.
     - `email-port`: The port for the IMAP server (default is 993).
