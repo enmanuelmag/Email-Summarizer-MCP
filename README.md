@@ -10,11 +10,6 @@ This project is designed to summarize emails using a custom IMAP client to conne
   - Sender email address
   - Mailbox (default is 'INBOX')
 
-## Requirements
-Setup the env vars:
-- `MCP_EMAIL_USER`: Your email address.
-- `MCP_EMAIL_APP_PASSWORD`: Your email app password (you will need to generate this from your email provider).
-
 ## Available Tools
 
 - `search-emails`: Get emails from the user's inbox.
