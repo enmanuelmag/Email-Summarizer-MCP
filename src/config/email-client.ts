@@ -199,7 +199,7 @@ class EmailClient {
 
     try {
       await this.connect();
-      await this.client.mailboxOpen('INBOX');
+      await this.client.mailboxOpen(params.mailbox || 'INBOX');
 
       await this.client.messageFlagsAdd(ids, ['\\Seen'], {
         uid: true,

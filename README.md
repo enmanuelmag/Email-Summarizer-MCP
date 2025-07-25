@@ -15,6 +15,11 @@ Setup the env vars:
 - `MCP_EMAIL_USER`: Your email address.
 - `MCP_EMAIL_APP_PASSWORD`: Your email app password (you will need to generate this from your email provider).
 
+## Available Tools
+
+- `search-emails`: Get emails from the user's inbox.
+- `mark-emails-as-read`: Mark specified emails as read.
+
 ## Usage
 
 ### Command (NPM)

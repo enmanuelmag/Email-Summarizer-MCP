@@ -68,6 +68,10 @@ export type OutputGetEmailsType = z.infer<typeof OutputGetEmailsSchema>;
 // Mark Emails as Read Schemas
 export const InputMarkEmailsAsRead = {
   ids: z.array(z.number()).describe('Array of email IDs to mark as read'),
+  mailbox: z
+    .string()
+    .default('INBOX')
+    .describe('Mailbox to mark emails as read from'),
 } as const;
 const InputMarkEmailsAsReadSchema = z.object(InputMarkEmailsAsRead);
 export type InputMarkEmailsAsReadType = z.infer<
