@@ -17,6 +17,21 @@ Setup the env vars:
 
 ## Usage
 
+### Command (NPM)
+1. Install dependencies `pnpm install -g @cardor/email-summarizer`.
+2. Add the configuration to your app client.
+```json
+"email-summarizer": {
+  "command": "cardor-email-summarizer",
+  "env": {
+    "EMAIL_USERNAME": "<your-email>",
+    "EMAIL_PASSWORD": "<your-app-password>",
+    "EMAIL_PORT": "993", 
+    "EMAIL_CLIENT_TYPE": "gmail"
+  }
+}
+```
+
 ### Command (Without Docker)
 1. Install dependencies `pnpm install`.
 2. Add the configuration to your app client.
