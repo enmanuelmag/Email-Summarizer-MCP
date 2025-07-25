@@ -1,9 +1,13 @@
 {
   "name": "email-summarizer",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Node.js application for summarizing emails using the ModelContextProtocol (MCP).",
   "type": "module",
   "main": "dist/main.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "dev": "tsx ./main.ts",
     "serve": "tsx ./server.ts",
@@ -16,7 +20,14 @@
     "docker:remove": "docker compose down --rmi all --volumes --remove-orphans",
     "docker:remove:img": "docker rmi email-summarizer --force"
   },
-  "keywords": [],
+  "keywords": [
+    "email",
+    "summarizer",
+    "modelcontextprotocol",
+    "mcp",
+    "typescript",
+    "nodejs"
+  ],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.12.4",

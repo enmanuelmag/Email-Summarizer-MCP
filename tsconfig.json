@@ -5,6 +5,7 @@
     "module": "ESNext", // Para Node.js, CommonJS es el estándar.
     "outDir": "./dist", // Directorio donde se guardarán los archivos .js compilados.
     "rootDir": "./src", // Directorio raíz de tus archivos .ts. Todo lo que esté aquí se compilará.
+    "declaration": true,
 
     /* Strict Type-Checking Options */
     "strict": true, // Habilita todas las opciones de verificación estricta de tipos. Muy recomendado.
