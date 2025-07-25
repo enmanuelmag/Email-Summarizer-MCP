@@ -18,7 +18,7 @@ This project is designed to summarize emails using a custom IMAP client to conne
 ## Usage
 
 ### Command (NPM)
-1. Install dependencies `pnpm install -g @cardor/email-summarizer`.
+1. Install dependencies `pnpm install -g @cardor/email-summarizer`
 2. Add the configuration to your app client.
 ```json
 "email-summarizer": {
