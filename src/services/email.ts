@@ -17,6 +17,7 @@ import type {
 } from '../types/email';
 import { FETCH_EMAILS_PROMPT } from '../constants/email';
 import { Logger } from '../utils/logger';
+import { getContentExternal } from '../utils/resource';
 
 const fetchEmailsHandler = async (
   params: InputGetEmailsType,
@@ -161,18 +162,11 @@ export function registerEmailServices(server: McpServer) {
         process.env.EMAIL_PROMPT ||
         FETCH_EMAILS_PROMPT;
 
-      Logger.debug(
-        'Prompt sources:',
-        JSON.stringify({
-          header: requestInfo?.headers['email-prompt'],
-          env: process.env.EMAIL_PROMPT,
-          final: finalPrompt,
-        })
-      );
+      const contentPrompt = await getContentExternal(finalPrompt);
 
-      Logger.debug('Using prompt for email summarization:', finalPrompt);
+      Logger.debug('Using prompt for email summarization:', contentPrompt);
 
-      const finalResponse = parseResponsePrompt(responseEmails, finalPrompt);
+      const finalResponse = parseResponsePrompt(responseEmails, contentPrompt);
       return {
         content: [
           {

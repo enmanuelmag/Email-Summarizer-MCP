@@ -30,11 +30,22 @@ This project is designed to summarize emails using a custom IMAP client to conne
   "type": "stdio", // Maybe your client MCP require specific type, like 'stdio'
   "command": "cardor-email-summarizer",
   "env": {
-    "EMAIL_USERNAME": "<your-email>", // Your email address.
-    "EMAIL_PASSWORD": "<your-app-password>", // Your email app password.
-    "EMAIL_PORT": "993",  // The port for the IMAP server (default is 993).
-    "EMAIL_CLIENT_TYPE": "gmail", // The type of email client: gmail, outlook, yahoo, etc (default is 'gmail').
-    "EMAIL_PROMPT": "Summarize the following emails: {{emails}}" // Custom prompt for summarization. Must include `{{emails}}` to insert the email content.
+    // Your email address.
+    "EMAIL_USERNAME": "<your-email>", 
+    // Your email app password.
+    "EMAIL_PASSWORD": "<your-app-password>",
+    // The port for the IMAP server (default is 993).
+    "EMAIL_PORT": "993",  
+    // The type of email client: gmail, outlook, yahoo, etc (default is 'gmail').
+    "EMAIL_CLIENT_TYPE": "gmail", 
+    // Custom prompt for summarization. Must include `{{emails}}` to insert the email content.
+    "EMAIL_PROMPT": "Summarize the following emails: {{emails}}", 
+    // You can also use a file path to load the prompt content. You must use absolute path.
+    // The file types supported are: .txt, .md, .json or .pdf.
+    // "EMAIL_PROMPT": "file:/Absolute/Path/To/Prompt.txt"
+    // Also you can define a URL to load the prompt content. The URL must return a text content.
+    // The file types supported are: .txt, .md, .json or .pdf.
+    // "EMAIL_PROMPT": "https://example.com/path/to/prompt.txt"
   }
 }
 ```
@@ -59,7 +70,9 @@ This project is designed to summarize emails using a custom IMAP client to conne
     "-e",
     "EMAIL_CLIENT_TYPE=gmail",
     "-e",
-    "EMAIL_PROMPT=Summarize the following emails: {{emails}}", // Custom prompt for summarization. Must include `{{emails}}` to insert the email content.
+    // Custom prompt for summarization. Must include `{{emails}}` to insert the email content.
+    // As above, you can use a file path or a URL.
+    "EMAIL_PROMPT=Summarize the following emails: {{emails}}", 
     "email-summarizer",
   ]
 }
@@ -77,7 +90,7 @@ You can also use the HTTP API to interact with the email summarizer. The API exp
     - `email-password`: Your email app password.
     - `email-port`: The port for the IMAP server (default is 993).
     - `email-client-type`: The type of email client (default is 'gmail').
-    - `email-prompt`: Custom prompt for summarization (default is 'Summarize the following emails: {{emails}}'). Must include `{{emails}}` to insert the email content.
+    - `email-prompt`: Custom prompt for summarization (default is 'Summarize the following emails: {{emails}}'). Must include `{{emails}}` to insert the email content. As above, you can use a file path or a URL.
 
 
 ## Future work
