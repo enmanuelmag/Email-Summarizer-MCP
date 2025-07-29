@@ -9,6 +9,11 @@ This project is designed to summarize emails using a custom IMAP client to conne
   - Date range
   - Sender email address
   - Mailbox (default is 'INBOX')
+  
+## Debug
+- Stdio: If you run this server in STDIO mode, all logs are saved in `server.log` file, in the location where you run the command. You can change this, setting the `DEBUG_LOG_FILE` environment variable to a custom path (absolute path).
+- Docker: this mode use STDIO mode, so all logs are saved in `server.log` file, in the location where you run the command. You can change this, setting the `DEBUG_LOG_FILE` environment variable to a custom path (absolute path).
+- Stream: If you run this server in stream mode, all logs are printed to the console.
 
 ## Available Tools
 
