@@ -16,6 +16,7 @@ import type {
   InputMarkEmailsAsReadType,
 } from '../types/email';
 import { FETCH_EMAILS_PROMPT } from '../constants/email';
+import { Logger } from '../utils/logger';
 
 const fetchEmailsHandler = async (
   params: InputGetEmailsType,
@@ -55,17 +56,12 @@ const markEmailsAsReadHandler = async (
   }
 };
 
-const parseResponsePrompt = (
-  response: OutputGetEmailsType,
-  prompt?: string
-) => {
+const parseResponsePrompt = (response: OutputGetEmailsType, prompt: string) => {
   if (!response.emails || response.emails.length === 0) {
     return 'No emails found matching the criteria.';
   }
 
-  const emailsPrompt = prompt || FETCH_EMAILS_PROMPT;
-
-  const emailsContent = emailsPrompt.replace(
+  const emailsContent = prompt.replace(
     '{{emails}}',
     JSON.stringify(response.emails)
   );
@@ -79,7 +75,7 @@ export function registerEmailServices(server: McpServer) {
     {
       title: 'Get Emails',
       description:
-        "Get emails from the user's inbox. Can specify a subject, date range, or sender to filter results.",
+        "Get emails from the user's inbox. Can specify the mailbox (INBOX by default), a subject (string), date range (ISO format: YYYY-MM-DDTHH:mm:ss), and sender emails (list of strings) to filter emails.",
       annotations: {
         destructiveHint: false,
         idempotentHint: false,
@@ -99,12 +95,14 @@ export function registerEmailServices(server: McpServer) {
               start: {
                 type: 'string',
                 format: 'date-time',
-                description: 'Start date of the range',
+                description:
+                  'Start date of the range, format YYYY-MM-DDTHH:mm:ss',
               },
               end: {
                 type: 'string',
                 format: 'date-time',
-                description: 'End date of the range',
+                description:
+                  'End date of the range, format YYYY-MM-DDTHH:mm:ss',
               },
             },
             required: ['start', 'end'],
@@ -127,6 +125,11 @@ export function registerEmailServices(server: McpServer) {
       } as AuthEmailType;
 
       const responseEmails = await fetchEmailsHandler(params, authEmail);
+
+      Logger.debug(
+        'Received emails response:',
+        JSON.stringify(responseEmails, null, 2)
+      );
 
       if (responseEmails.error) {
         return {
@@ -154,9 +157,20 @@ export function registerEmailServices(server: McpServer) {
       }
 
       const finalPrompt =
-        String(requestInfo?.headers['email-prompt']) ||
+        (requestInfo?.headers['email-prompt'] as string) ||
         process.env.EMAIL_PROMPT ||
         FETCH_EMAILS_PROMPT;
+
+      Logger.debug(
+        'Prompt sources:',
+        JSON.stringify({
+          header: requestInfo?.headers['email-prompt'],
+          env: process.env.EMAIL_PROMPT,
+          final: finalPrompt,
+        })
+      );
+
+      Logger.debug('Using prompt for email summarization:', finalPrompt);
 
       const finalResponse = parseResponsePrompt(responseEmails, finalPrompt);
       return {
