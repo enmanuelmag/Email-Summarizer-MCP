@@ -50,7 +50,7 @@ app.post('/mcp', async (req, res) => {
     };
     const server = new McpServer({
       name: 'email-summarizer',
-      version: '1.0.0',
+      version: '1.3.0',
     });
 
     registerEmailServices(server);

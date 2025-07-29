@@ -1,6 +1,6 @@
 {
   "name": "@cardor/email-summarizer",
-  "version": "1.2.6",
+  "version": "1.3.0",
   "description": "A Node.js application for summarizing emails using the ModelContextProtocol (MCP).",
   "type": "module",
   "main": "dist/main.js",
@@ -9,11 +9,12 @@
     "README.md"
   ],
   "bin": {
-    "cardor-email-summarizer": "dist/main.js"
+    "cardor-email-summarizer": "dist/main.js",
+    "cardor-email-summarizer-server": "dist/server.js"
   },
   "scripts": {
-    "dev": "tsx ./main.ts",
-    "serve": "tsx ./server.ts",
+    "dev": "tsx ./src/main.ts",
+    "serve": "tsx ./src/server.ts",
     "start": "node dist/main.js",
     "build": "tsc && tsc-alias && ts-add-js-extension --dir=dist",
     "docker:build": "docker build -t email-summarizer .",
@@ -31,9 +32,8 @@
     "typescript",
     "nodejs"
   ],
-  "author": "",
+  "author": "enmanuelmag@cardor.dev",
   "license": "ISC",
-  "packageManager": "pnpm@10.12.4",
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.15.0",
     "@types/cors": "^2.8.19",
